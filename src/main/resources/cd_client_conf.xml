@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ServiceConfig Version="11.6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:noNamespaceSchemaLocation="schemas/xo-search-conf.xsd"
+               ConnectionTimeout="${indexconnectiontimeout:-10000}"
+               ReadTimeout="${indexreadtimeout:-30000}"
+               WriteTimeout="${indexwritetimeout:-30000}"
+               MaxIdleConnections="${indexmaxidleconnections:-30}">
+
+    <DiscoveryService ServiceUri="${DISCOVERY_URL:-http://win-ippv5qi2utt:8082/discovery.svc}"/>
+    <TokenService ClientId="cduser" ClientSecret="CDUserP@ssw0rd"/>
+    <QueryClient Class="com.sdl.tridion.xo.query.client.rest.RestQueryClient" />
+</ServiceConfig>
