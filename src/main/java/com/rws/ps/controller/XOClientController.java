@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,15 +46,16 @@ public class XOClientController {
 
         QueryBuilder queryBuilder = new QueryBuilder();
 
-        String triggers = "";
+        final StringBuilder triggers = new StringBuilder();
         if (StringUtils.isNotEmpty(city)) {
-            triggers += String.format("&Contact - City=%s", city);
+            triggers.append(String.format("&Contact - City=%s", city));
         }
         if (StringUtils.isNotEmpty(browser)) {
-            triggers += String.format("&Visitor - Browser=%s", browser);
+            Arrays.stream(StringUtils.split(browser, ","))
+                    .forEach(browserEntry -> triggers.append(String.format("&Visitor - Browser=%s", browserEntry)));
         }
         if (StringUtils.isNotEmpty(triggers))
-            queryBuilder.parseQueryString(triggers);
+            queryBuilder.parseQueryString(triggers.toString());
 
         queryBuilder
                 .addCriteria(new PublicationCriteria(publicationUri))
