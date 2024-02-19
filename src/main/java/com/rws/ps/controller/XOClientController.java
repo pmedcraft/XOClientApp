@@ -39,6 +39,7 @@ public class XOClientController {
                                          @RequestParam("pageId") String pageId,
                                          @RequestParam("region") String region,
                                          @RequestParam("city") String city,
+                                         @RequestParam("country") String country,
                                          @RequestParam("browser") String browser) throws ParseException, SmartTargetException {
 
         TcmUri publicationUri = new TcmUri(String.format("tcm:0-%s-1", pubId));
@@ -49,6 +50,9 @@ public class XOClientController {
         final StringBuilder triggers = new StringBuilder();
         if (StringUtils.isNotEmpty(city)) {
             triggers.append(String.format("&Contact - City=%s", city));
+        }
+        if (StringUtils.isNotEmpty(country)) {
+            triggers.append(String.format("&Contact - Country=%s", country));
         }
         if (StringUtils.isNotEmpty(browser)) {
             Arrays.stream(StringUtils.split(browser, ","))
