@@ -37,10 +37,9 @@ public class XOClientController {
     @PostMapping(value = {"/promotions"})
     public List<Promotion> getPromotions(@RequestParam("pubId") String pubId,
                                          @RequestParam("pageId") String pageId,
-                                         @RequestParam("region") String region,
                                          @RequestParam("city") String city,
                                          @RequestParam("country") String country,
-                                         @RequestParam("browser") String browser) throws ParseException, SmartTargetException {
+                                         @RequestParam("geoRegion") String geoRegion) throws ParseException, SmartTargetException {
 
         TcmUri publicationUri = new TcmUri(String.format("tcm:0-%s-1", pubId));
         TcmUri pageUri = new TcmUri(String.format("tcm:%s-%s-64", pubId, pageId));
@@ -54,9 +53,8 @@ public class XOClientController {
         if (StringUtils.isNotEmpty(country)) {
             triggers.append(String.format("&Contact - Country=%s", country));
         }
-        if (StringUtils.isNotEmpty(browser)) {
-            Arrays.stream(StringUtils.split(browser, ","))
-                    .forEach(browserEntry -> triggers.append(String.format("&Visitor - Browser=%s", browserEntry)));
+        if (StringUtils.isNotEmpty(geoRegion)) {
+            triggers.append(String.format("&Contact - GeoRegion=%s", geoRegion));
         }
         if (StringUtils.isNotEmpty(triggers))
             queryBuilder.parseQueryString(triggers.toString());
@@ -65,15 +63,15 @@ public class XOClientController {
                 .addCriteria(new PublicationCriteria(publicationUri))
                 .addCriteria(new PageCriteria(pageUri));
 
+        /*
         if (StringUtils.isNotEmpty(region))
             queryBuilder.addCriteria(new RegionCriteria(region));
+        */
 
-        /*
         List<String> regions = List.of("Header", "Footer", "Sidebar", "Inset 1", "Inset 2");
         for (String region : regions) {
             queryBuilder.addCriteria(new RegionCriteria(region));
         }
-        */
 
         ResultSet resultSet = queryBuilder.execute();
         if (resultSet != null) {
