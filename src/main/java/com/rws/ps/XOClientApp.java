@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -15,7 +14,7 @@ import java.util.List;
  */
 @SpringBootApplication
 @Slf4j
-public class XOClientApp extends SpringBootServletInitializer {
+public class XOClientApp {
     public static void main(String[] args) {
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> arguments = runtimeMxBean.getInputArguments();

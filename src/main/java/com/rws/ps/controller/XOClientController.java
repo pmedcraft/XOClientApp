@@ -1,5 +1,10 @@
 package com.rws.ps.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.rws.ps.XOTriggers;
+import com.rws.ps.criteria.GeoRegionParameterProvider;
+
 import com.tridion.smarttarget.SmartTargetException;
 import com.tridion.smarttarget.query.Promotion;
 import com.tridion.smarttarget.query.ResultSet;
@@ -17,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +31,13 @@ import java.util.List;
 @Controller
 @Slf4j
 public class XOClientController {
+
+    private final XOTriggers xoTriggers;
+
+    @Autowired
+    public XOClientController(XOTriggers xoTriggers) {
+        this.xoTriggers = xoTriggers;
+    }
 
     @GetMapping("/")
     public String outputForm() {
@@ -38,8 +49,9 @@ public class XOClientController {
     public List<Promotion> getPromotions(@RequestParam("pubId") String pubId,
                                          @RequestParam("pageId") String pageId,
                                          @RequestParam("city") String city,
-                                         @RequestParam("country") String country,
-                                         @RequestParam("geoRegion") String geoRegion) throws ParseException, SmartTargetException {
+                                         @RequestParam("geoRegion") String geoRegion,
+                                         @RequestParam("country") String country)
+            throws ParseException, SmartTargetException {
 
         TcmUri publicationUri = new TcmUri(String.format("tcm:0-%s-1", pubId));
         TcmUri pageUri = new TcmUri(String.format("tcm:%s-%s-64", pubId, pageId));
@@ -47,28 +59,24 @@ public class XOClientController {
         QueryBuilder queryBuilder = new QueryBuilder();
 
         final StringBuilder triggers = new StringBuilder();
+
         if (StringUtils.isNotEmpty(city)) {
-            triggers.append(String.format("&Contact - City=%s", city));
+            triggers.append(String.format("&am_ex_city=%s", city));
         }
-        if (StringUtils.isNotEmpty(country)) {
-            triggers.append(String.format("&Contact - Country=%s", country));
-        }
-        if (StringUtils.isNotEmpty(geoRegion)) {
-            triggers.append(String.format("&Contact - GeoRegion=%s", geoRegion));
-        }
+
         if (StringUtils.isNotEmpty(triggers))
             queryBuilder.parseQueryString(triggers.toString());
+
+        if (StringUtils.isNotEmpty(geoRegion)) {
+            GeoRegionParameterProvider geoRegionParamProvider = new GeoRegionParameterProvider(xoTriggers, geoRegion,country);
+            queryBuilder.parseQueryString(geoRegionParamProvider.getParameterValue());
+        }
 
         queryBuilder
                 .addCriteria(new PublicationCriteria(publicationUri))
                 .addCriteria(new PageCriteria(pageUri));
 
-        /*
-        if (StringUtils.isNotEmpty(region))
-            queryBuilder.addCriteria(new RegionCriteria(region));
-        */
-
-        List<String> regions = List.of("Header", "Footer", "Sidebar", "Inset 1", "Inset 2");
+        List<String> regions = List.of("Banner", "Example1", "Example2", "Header", "Footer", "Hero", "Sidebar", "Inset 1", "Inset 2");
         for (String region : regions) {
             queryBuilder.addCriteria(new RegionCriteria(region));
         }
