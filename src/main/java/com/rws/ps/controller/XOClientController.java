@@ -48,7 +48,6 @@ public class XOClientController {
     @PostMapping(value = {"/promotions"})
     public List<Promotion> getPromotions(@RequestParam("pubId") String pubId,
                                          @RequestParam("pageId") String pageId,
-                                         @RequestParam("city") String city,
                                          @RequestParam("geoRegion") String geoRegion,
                                          @RequestParam("country") String country)
             throws ParseException, SmartTargetException {
@@ -59,10 +58,6 @@ public class XOClientController {
         QueryBuilder queryBuilder = new QueryBuilder();
 
         final StringBuilder triggers = new StringBuilder();
-
-        if (StringUtils.isNotEmpty(city)) {
-            triggers.append(String.format("&am_ex_city=%s", city));
-        }
 
         if (StringUtils.isNotEmpty(triggers))
             queryBuilder.parseQueryString(triggers.toString());
