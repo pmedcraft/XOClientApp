@@ -47,6 +47,6 @@ public class GeoRegionParameterProvider {
             return StringUtils.endsWith(triggerValue, geoRegion);
 
         return StringUtils.startsWith(triggerValue, geoRegion) &&
-                !StringUtils.endsWith(triggerValue, String.format("NOT %s", country));
+                !StringUtils.endsWith(triggerValue, String.format("EXCLUDE %s", country));
     }
 }
